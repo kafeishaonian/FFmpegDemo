@@ -19,6 +19,13 @@ API=21
   ARCH_CPU_TYPE=aarch64-linux-android
   PLATFORM_ARCH=arch-arm64
 
+# x86
+#  CPU=x86
+#  ARCH=x86
+#  ARCH_TYPE=i686-linux-android
+#  ARCH_CPU_TYPE=x86
+#  PLATFORM_ARCH=arch-x86
+
 #=============================
 
 #so库输出目录
@@ -45,6 +52,7 @@ function build
   --enable-asm \
   --enable-neon \
   --enable-cross-compile \
+  --disable-small \
   --disable-shared \
   --enable-static \
   --disable-doc \
