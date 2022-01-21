@@ -7,21 +7,35 @@ cmake_minimum_required(VERSION 3.10.2)
 
 # Declares and names the project.
 
-project("play")
+project("VideoPlayer")
+
+# 配置编译选项
+
 
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
 # You can define multiple libraries, and CMake builds them for you.
 # Gradle automatically packages shared libraries with your APK.
 
+set(PLAYER_FILE
+        MediaVideoPlayer_Jni.cpp)
+
 add_library( # Sets the name of the library.
-        play
+        VideoPlayer
 
         # Sets the library as a shared library.
         SHARED
 
         # Provides a relative path to your source file(s).
-        play.cpp)
+        ${PLAYER_FILE})
+
+add_library(libffmpeg SHARED IMPORTED)
+
+set_target_properties(libffmpeg
+        PROPERTIES IMPORTED_LOCATION
+        ${PROJECT_SOURCE_DIR}/src/jniLibs/${ANDROID_ABI}/libffmpeg.so)
+
+include_directories(${PROJECT_SOURCE_DIR}/src/main/cpp/include)
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
@@ -36,13 +50,17 @@ find_library( # Sets the name of the path variable.
         # you want CMake to locate.
         log)
 
+find_library(android android)
+
 # Specifies libraries CMake should link to your target library. You
 # can link multiple libraries, such as libraries you define in this
 # build script, prebuilt third-party libraries, or system libraries.
 
 target_link_libraries( # Specifies the target library.
-        play
+        VideoPlayer
 
         # Links the target library to the log library
         # included in the NDK.
-        ${log-lib})
+        ${libffmpeg}
+        ${log-lib}
+        ${android})
