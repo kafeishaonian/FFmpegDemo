@@ -166,6 +166,10 @@ gitTagAndLog(){
     git rev-parse --abbrev-ref HEAD >> "${MODULES_FIRST_NAME}"/"${MODULES_LAST_NAME}"/"${MODULES_LAST_NAME}_log.txt"
     git rev-parse HEAD >> "${MODULES_FIRST_NAME}"/"${MODULES_LAST_NAME}"/"${MODULES_LAST_NAME}_log.txt"
     git log --pretty=format:'%D %ci%n' -1 >> "${MODULES_FIRST_NAME}"/"${MODULES_LAST_NAME}"/"${MODULES_LAST_NAME}_log.txt"
+
+    git add .
+    git commit -m
+
   fi
 }
 
