@@ -86,12 +86,123 @@ fi
 
 #=======================
 
+## 解决冲突处理
+mergeConflictSolve(){
+  echo "当前代码有冲突，请现解决冲突，冲突文件为："
+  git ls-files -u | cut -f 2 | sort -u
+
+  read -p "解决冲突后按 Y，现在退出，N？ Y｜N" merge_params
+
+  git add .
+  git commit
+  git pull --rebase
+  if [ -n "$(git status --porcelain)" ]; then
+    mergeConflictSolve
+  fi
+}
+
+# push代码到当前分支
+addCodePushOrigin(){
+  git add .
+  read -p "请输入提交名称: " commit_params
+  if [ "${commit_params}" == "" ]; then
+    addCodePushOrigin
+  else
+    git commit -m "${commit_params}"
+  fi
+
+  git pull --rebase
+
+  if [ -n "$(git status --porcelain)" ]; then
+    mergeConflictSolve
+  fi
+
+  git push origin "$(git rev-parse --abbrev-ref HEAD)"
+
+}
+
+# 对未提交代码进行处理
+statusCodeOperation(){
+  read -p "当前有未提交代码，1, 继续提交， 2，暂存，  3， 舍弃  ？1|2｜3 : " operation_params
+  if [ ${operation_params} == "1" ]; then
+    addCodePushOrigin
+  elif [ ${operation_params} == "2" ]; then
+    git stash
+  else
+
+  fi
+}
+
+# 判断是否有未提交代码
+isStatus(){
+  if [ -n "$(git status --porcelain)" ]; then
+    statusCodeOperation
+  else
+      echo "已全部提交";
+      checkoutMain
+  fi
+}
+
+
+
+
+
+
+
 BRANCH_PROJECT="$(git rev-parse --abbrev-ref HEAD)"
 
 
-if [  ]; then
 
-fi
+
+mainBranch(){
+  if [ "${MAIN_BRANCH_PATH}" == "${BRANCH_PROJECT}" ]; then
+    isStatus
+
+
+
+
+  else
+
+
+
+
+  fi
+  
+  
+  
+  
+}
+
+
+
+
+
+
+
+# 主分枝判断   在   直接处理     不在  查看是否未提交    然后切换到主分枝    然后更新数据   pull
+
+# 输入合并分支 
+
+
+
+
+# 首先判断是否输入主分枝， 输入主分枝  判断当前分支是否在主分枝， 在主分枝   判断是否还有未提交代码   如果有就提交，或者舍弃， 或者暂存，  如果没有就询问是否 直接打包
+# 在输入主分枝的情况下
+
+#
+
+# 首先判断是否输入开发分支名称， 如果输入   则判断当前是否当前分支， 在开发分支之后， 判断是否还有未提交代码   如果有就提交，或者舍弃， 或者暂存，  如果没有就询问是否 直接打包
+
+#如果当前分支不在开发分支， 现判断是否有未提交代码， 如果有   要么提交，  要么舍弃  要不暂存    如果没有    则直接切换分支，   并询问是否打包
+
+
+# 是否输入主分枝，
+
+
+
+#if [  ]; then
+#
+#fi
 
 
 
@@ -99,11 +210,11 @@ read -p "是否操作当前分支 ${BRANCH_PROJECT} ？Y|N : " add_params
 if [[ $add_params == "Y" || $add_params == "y" ]]; then
 
 else
-  info
+  #请
+
+
   exit
 fi
-
-
 
 
 
