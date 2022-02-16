@@ -1,24 +1,19 @@
 #!/bin/bash
 
-#MAIN_BEANCH_PATH="master"
-#BRANCH_PROJECT="$(git rev-parse --abbrev-ref HEAD)"
-
 MODULES_NAME=""
 DEV_BRANCH_NAME=""
 MAIN_BRANCH_PATH=""
 
 MODULES_FIRST_NAME=""
 MODULES_LAST_NAME=""
-NEW_VERSION=""
 
 
 set -e
 info(){
-    echo "./media_video_play.sh [-m] modules [-d] development branch [-b] main branch [-v] version"
+    echo "./media_video_play.sh [-m] modules [-d] development branch [-b] main branch"
     echo "m 指定modules, 对应:modules:xxx"
     echo "d 指定开发分支， 指定当前是在那个开发分支进行开发，用于开发分支打包"
     echo "b 主分枝， merge时开发分支与主分枝都必填，merge后产生冲突，解决冲突之后，可只填主分枝"
-    echo "v 版本号，不需要输入，默认版本号规则为xxx.20200310104130"
 }
 if [ $# -lt 1 ]; then
     info
@@ -27,7 +22,7 @@ fi
 
 
 # 获取输入参数
-while getopts "m:d:b:v:" opt; do
+while getopts "m:d:b:" opt; do
   echo " ${opt}    ${OPTARG}"
   case ${opt} in
   m)
@@ -38,9 +33,6 @@ while getopts "m:d:b:v:" opt; do
     ;;
   b)
     MAIN_BRANCH_PATH=${OPTARG}
-    ;;
-  v)
-    NEW_VERSION=${OPTARG}
     ;;
   ?)
     echo "error: 无效参数"
@@ -208,6 +200,7 @@ mainBranch(){
   gitTagAndLog
 }
 
+mainBranch
 
 
 
