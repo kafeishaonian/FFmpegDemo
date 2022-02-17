@@ -6,14 +6,16 @@ MAIN_BRANCH_PATH=""
 
 MODULES_FIRST_NAME=""
 MODULES_LAST_NAME=""
+NEW_VERSION=""
 
 
 set -e
 info(){
-    echo "./media_video_play.sh [-m] modules [-d] development branch [-b] main branch"
+    echo "./media_video_play.sh [-m] modules [-d] development branch [-b] main branch [-v] version"
     echo "m 指定modules, 对应:modules:xxx"
     echo "d 指定开发分支， 指定当前是在那个开发分支进行开发，用于开发分支打包"
     echo "b 主分枝， merge时开发分支与主分枝都必填，merge后产生冲突，解决冲突之后，可只填主分枝"
+    echo "v 版本号， 输入打包版本号，自动生成对应版本"
 }
 if [ $# -lt 1 ]; then
     info
@@ -22,7 +24,7 @@ fi
 
 
 # 获取输入参数
-while getopts "m:d:b:" opt; do
+while getopts "m:d:b:v:" opt; do
   echo " ${opt}    ${OPTARG}"
   case ${opt} in
   m)
@@ -33,6 +35,9 @@ while getopts "m:d:b:" opt; do
     ;;
   b)
     MAIN_BRANCH_PATH=${OPTARG}
+    ;;
+  v)
+    NEW_VERSION=${OPTARG}
     ;;
   ?)
     echo "error: 无效参数"
@@ -103,7 +108,7 @@ mergeConflictSolve(){
 # push代码到当前分支
 addCodePushOrigin(){
   git add .
-  read -p "请输入提交名称: " commit_params
+  read -p "输入提交commit: " commit_params
   if [ "${commit_params}" == "" ]; then
     addCodePushOrigin
   else
@@ -122,13 +127,15 @@ addCodePushOrigin(){
 
 # 对未提交代码进行处理
 statusCodeOperation(){
-  read -p "当前有未提交代码，1, 继续提交， 2，暂存，  3， 舍弃  ？1|2｜3 : " operation_params
+  read -p "当前存在未提交代码： 1.提交， 2.暂存，  3.舍弃  ？1|2｜3 : " operation_params
   if [ "${operation_params}" == "1" ]; then
     addCodePushOrigin
   elif [ "${operation_params}" == "2" ]; then
     git stash
-  else
+  elif [ "${operation_params}" == "3" ]; then
     git checkout .
+  else
+    statusCodeOperation
   fi
 }
 
@@ -142,7 +149,9 @@ isStatus(){
 #打包
 hitPack(){
   cd ../..
-  ./gradlew "${MODULES_NAME}":clean "${MODULES_NAME}":uploadArchives
+  cd kts
+  ./updateModel.kts "${MODULES_NAME}" "${NEW_VERSION}"
+#  ./gradlew "${MODULES_NAME}":clean "${MODULES_NAME}":uploadArchives
 }
 
 #合并分支
@@ -156,8 +165,16 @@ mergeDevelopmentBranch(){
 
 gitTagAndLog(){
   if [ "${MAIN_BRANCH_PATH}" == "${BRANCH_PROJECT}" ]; then
+    #记录tag信息
+    BUILD_INFO_VERSION="详见tag"
+    if [ "${NEW_VERSION}" != "" ]; then
+      BUILD_INFO_VERSION="${NEW_VERSION}"
+      git tag "${NEW_VERSION}"
+      git push --tags
+    fi
+
     #记录编译时间，版本号， commitid， 信息至文件，方便查询
-    BUILD_INFO="对 ${MODULES_NAME} 发布版本，版本号详见tag"
+    BUILD_INFO="对 ${MODULES_NAME} 发布版本，版本号 ${BUILD_INFO_VERSION}"
     echo 'back git commit'
     set -x
     echo -e '\n' >> "${MODULES_FIRST_NAME}"/"${MODULES_LAST_NAME}"/"${MODULES_LAST_NAME}_log.txt"
@@ -168,8 +185,8 @@ gitTagAndLog(){
     git log --pretty=format:'%D %ci%n' -1 >> "${MODULES_FIRST_NAME}"/"${MODULES_LAST_NAME}"/"${MODULES_LAST_NAME}_log.txt"
 
     git add .
-    git commit -m
-
+    git commit -m "更新打包tag"
+    git push origin "${MAIN_BRANCH_PATH}"
   fi
 }
 
