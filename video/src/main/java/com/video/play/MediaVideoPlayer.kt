@@ -1,13 +1,29 @@
 package com.video.play
 
+import android.view.Surface
+
 class MediaVideoPlayer {
 
 
-    external fun start()
+
 
     companion object {
         init {
             System.loadLibrary("VideoPlayer")
         }
     }
+
+
+
+
+
+
+    private external fun native_Init(
+        url: String,
+        videoRenderType: Int,
+        surface: Surface?
+    ): Long
+
+
+    private external fun native_play(playerHandle: Long)
 }

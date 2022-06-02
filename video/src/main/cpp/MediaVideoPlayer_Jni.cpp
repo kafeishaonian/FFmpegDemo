@@ -1,12 +1,31 @@
 #include <jni.h>
-#include <string>
+#include "FFMediaPlayer.h"
 
-static void MediaVideoPlayer_start(JNIEnv *env, jclass clazz){
+#define LOGCATE(TAG, FORMAT, ...) __android_log_print(ANDROID_LOG_ERROR, TAG, FORMAT, ##__VA_ARGS__)
+//static const char *TAG = "MediaVideoPlayer_JNI";
 
+
+static jlong MediaVideoPlayer_Init(JNIEnv *env, jobject clazz, jstring pathUrl, jint renderType, jobject surface){
+
+    const char * url = env->GetStringUTFChars(pathUrl, NULL);
+    FFMediaPlayer *player = new FFMediaPlayer();
+    player->Init(env, clazz, const_cast<char *>(url), renderType, surface);
+    env->ReleaseStringUTFChars(pathUrl, url);
+    return reinterpret_cast<jlong>(player);
 }
 
+static void MediaVideoPlayer_Play(JNIEnv *env, jobject thiz, jlong player_handle) {
+    if (player_handle != 0) {
+        FFMediaPlayer *ffMediaPlayer = reinterpret_cast<FFMediaPlayer *>(player_handle);
+        ffMediaPlayer->Play();
+    }
+}
+
+
+
 static const JNINativeMethod gMethod[] = {
-        {"start", "()V", (void *) MediaVideoPlayer_start}
+        {"native_Init", "(Ljava/lang/String;ILandroid/view/Surface;)J", (void *) MediaVideoPlayer_Init},
+        {"native_play", "(J)V", (void *) MediaVideoPlayer_Play}
 };
 
 extern "C"

@@ -1,0 +1,5 @@
+
+kkotlin:S100"TRename function "native_Init" to match the regular expression ^[a-zA-Z][a-zA-Z0-9]*$(‹ÞÑ£
+pkotlin:S100"TRename function "native_play" to match the regular expression ^[a-zA-Z][a-zA-Z0-9]*$(„ƒï¬ûÿÿÿÿ
+Hkotlin:S1144"0Remove this unused private "native_Init" method.(‹ÞÑ£
+Mkotlin:S1144"0Remove this unused private "native_play" method.(„ƒï¬ûÿÿÿÿ

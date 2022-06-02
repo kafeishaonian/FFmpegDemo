@@ -5,6 +5,7 @@
 
 cmake_minimum_required(VERSION 3.10.2)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
 # Declares and names the project.
 
 project("VideoPlayer")
@@ -17,8 +18,32 @@ project("VideoPlayer")
 # You can define multiple libraries, and CMake builds them for you.
 # Gradle automatically packages shared libraries with your APK.
 
-set(PLAYER_FILE
-        MediaVideoPlayer_Jni.cpp)
+
+include_directories(
+        include
+        glm
+        ${CMAKE_SOURCE_DIR}/player
+        ${CMAKE_SOURCE_DIR}/player/decoder
+        ${CMAKE_SOURCE_DIR}/util
+        ${CMAKE_SOURCE_DIR}/player/render
+        ${CMAKE_SOURCE_DIR}/player/render/audio
+        ${CMAKE_SOURCE_DIR}/player/render/video
+)
+
+
+#set(PLAYER_FILE
+#        MediaVideoPlayer_Jni.cpp
+#        /player/decoder/DecoderBase.h)
+
+file(GLOB PLAYER_FILE
+        ${CMAKE_SOURCE_DIR}/*.cpp
+        ${CMAKE_SOURCE_DIR}/util/*.cpp
+        ${CMAKE_SOURCE_DIR}/player/*.cpp
+        ${CMAKE_SOURCE_DIR}/player/decoder/*.cpp
+        ${CMAKE_SOURCE_DIR}/player/render/*.cpp
+        ${CMAKE_SOURCE_DIR}/player/render/audio/*.cpp
+        ${CMAKE_SOURCE_DIR}/player/render/video/*.cpp)
+
 
 add_library( # Sets the name of the library.
         VideoPlayer
